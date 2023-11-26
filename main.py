@@ -4,6 +4,7 @@ import datetime
 import time
 
 app = Tk()
+app.geometry('700x380')
 app.resizable(False, False)
 app.title('Holidays Calendar')
 
@@ -12,7 +13,7 @@ now = datetime.datetime.now()
 year = now.year
 month = now.month
 
-info_label = Label(app, text=year, width=1, height=1, font='Arial 16 bold', fg='#9B43E8')
+info_label = Label(app, width=1, height=1, font='Arial 16 bold', fg='#9B43E8')
 info_label.grid(row=0, column=1, columnspan=5, sticky=NSEW)
 
 for n in range(7):
@@ -25,7 +26,6 @@ for row in range(6):
         lblb.grid(row=row + 2, column=col, sticky=NSEW)
         days.append(lblb)
 
-
 def fill():
     info_label['text'] = calendar.month_name[month] + " " + str(year)
     month_days = calendar.monthrange(year, month)[1]
@@ -36,36 +36,30 @@ def fill():
 
     week_day = calendar.monthrange(year, month)[0]
     for n in range(month_days):
-        days[n + week_day]['text'] = n + 1
-        days[n + week_day]['fg'] = 'black'
-        if year == now.year and month == now.month and n == now.day:
-            days[week_day]['bg'] = 'green'
-            days[n + week_day]['bg'] = 'green'
-        else:
-            days[n + week_day]['bg'] = 'green'
+        day_number = n + 1
+        days[n + week_day]['text'] = day_number
 
     for n in range(week_day):
         days[week_day - n - 1]["text"] = (back_month_days - n)
-        days[week_day - n - 1]['fg'] = 'black'
-        days[week_day - n - 1]['bg'] = '#A246F3'
 
     for n in range(6 * 7 - month_days - week_day):
         days[week_day + month_days + n]["text"] = n + 1
-        days[week_day + month_days + n]['fg'] = 'black'
-        days[week_day + month_days + n]['bg'] = '#A246F3'
-
 
 def previous_button():
-    prev_button = Button(borderwidth=1, relief='solid', width=12, height=1, bg='#25CFFC', text='Previous',
+    prev_button = Button(borderwidth=1, relief='solid', width=12, height=1, bg='#25CFFC', text='<-- Previous',
                          font="Arial 12 bold", command=prev)
-    prev_button.grid(row=0, column=0, sticky=NSEW)
+    prev_button.grid(row=0, column=6, sticky=NSEW)
 
 
 def next_button():
-    next_btn = Button(borderwidth=1, relief='solid', width=12, height=1, bg="#25CFFC", text='Next',
+    next_btn = Button(borderwidth=1, relief='solid', width=12, height=1, bg="#25CFFC", text='Next -->',
                       font="Arial 12 bold", command=next)
-    next_btn.grid(row=0, column=6, sticky=NSEW)
+    next_btn.grid(row=0, column=9, sticky=NSEW)
 
+def calculate_button():
+    calc_button = Button(borderwidth=1, relief='solid', width=12, height=1, bg='#DB83F3', text='Calculate',
+                         font='Arial 12 bold', command=calculate)
+    calc_button.grid(row=0, column=0, sticky=NSEW)
 
 def prev():
     global month, year
@@ -83,9 +77,26 @@ def next():
         month = 1
         year += 1
     fill()
+def calculate():
+    red = '#EB3E26'
+    yellow = '#F08E27'
+    green = '#43EC0D'
+    holi_count = 0
+    day_count = 0
+    night_count = 0
+    month_days = calendar.monthrange(year, month)[1]
+    week_day = calendar.monthrange(year, month)[0]
+    for n in range(week_day, month_days + week_day):
+        day_lb = days[n]
+        day_number = n - week_day + 1
+        if day_count < 4:
+            day_lb['bg'] = yellow
+            day_count += 1
 
+        day_lb['text'] = day_number
 
 previous_button()
 next_button()
+calculate_button()
 fill()
 app.mainloop()
